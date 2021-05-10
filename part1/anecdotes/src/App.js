@@ -20,15 +20,11 @@ function App() {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(zeroFilledArr);
+  const [mostVotes, setMostVotes] = useState(0);
 
   const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
   };
-
-  const mostVotesIndex = votes.reduce(
-    (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
-    0
-  );
 
   const handleNextClick = () => {
     const num = getRandomInt(anecdotes.length);
@@ -40,19 +36,20 @@ function App() {
     const copy = [...votes];
     copy[selected] += 1;
     setVotes(copy);
+    if (copy[selected] > copy[mostVotes]) {
+      setMostVotes(selected);
+    }
     console.log(copy);
   };
 
   return (
     <>
       <Header text="Anecdote of the day" />
-      <Anecdote text={anecdotes[selected]} />
-      <Votes amount={votes[selected]} />
+      <Anecdote text={anecdotes[selected]} amount={votes[selected]} />
       <Button handleClick={handleVoteClick} text="vote" />
       <Button handleClick={handleNextClick} text="next anecdote" />
       <Header text="Anecdote with the most votes" />
-      <Anecdote text={anecdotes[mostVotesIndex]} />
-      <Votes amount={votes[mostVotesIndex]} />
+      <Anecdote text={anecdotes[mostVotes]} amount={votes[mostVotes]} />
     </>
   );
 }
@@ -60,23 +57,29 @@ function App() {
 // --------------------------
 // OTHER COMPONENTS
 // --------------------------
-const Header = (props) => {
-  return <h1>{props.text}</h1>;
+const Header = ({ text }) => {
+  return <h1>{text}</h1>;
 };
 
-const Anecdote = (props) => {
-  return <p>{props.text}</p>;
-};
-
-const Votes = (props) => {
-  if (!props.amount) {
-    return <p>has zero votes</p>;
+const Anecdote = ({ text, amount }) => {
+  if (!amount) {
+    return (
+      <div>
+        <p>{text}</p>
+        <p>has zero votes</p>
+      </div>
+    );
   }
-  return <p>has {props.amount} votes</p>;
+  return (
+    <div>
+      <p>{text}</p>
+      <p>has {amount} votes</p>
+    </div>
+  );
 };
 
-const Button = (props) => {
-  return <button onClick={props.handleClick}>{props.text}</button>;
+const Button = ({ handleClick, text }) => {
+  return <button onClick={handleClick}>{text}</button>;
 };
 
 export default App;
