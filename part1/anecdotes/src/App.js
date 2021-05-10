@@ -25,6 +25,11 @@ function App() {
     return Math.floor(Math.random() * max);
   };
 
+  const mostVotesIndex = votes.reduce(
+    (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
+    0
+  );
+
   const handleNextClick = () => {
     const num = getRandomInt(anecdotes.length);
     console.log(num);
@@ -40,9 +45,14 @@ function App() {
 
   return (
     <>
-      <p>{anecdotes[selected]}</p>
+      <Header text="Anecdote of the day" />
+      <Anecdote text={anecdotes[selected]} />
+      <Votes amount={votes[selected]} />
       <Button handleClick={handleVoteClick} text="vote" />
       <Button handleClick={handleNextClick} text="next anecdote" />
+      <Header text="Anecdote with the most votes" />
+      <Anecdote text={anecdotes[mostVotesIndex]} />
+      <Votes amount={votes[mostVotesIndex]} />
     </>
   );
 }
@@ -50,6 +60,21 @@ function App() {
 // --------------------------
 // OTHER COMPONENTS
 // --------------------------
+const Header = (props) => {
+  return <h1>{props.text}</h1>;
+};
+
+const Anecdote = (props) => {
+  return <p>{props.text}</p>;
+};
+
+const Votes = (props) => {
+  if (!props.amount) {
+    return <p>has zero votes</p>;
+  }
+  return <p>has {props.amount} votes</p>;
+};
+
 const Button = (props) => {
   return <button onClick={props.handleClick}>{props.text}</button>;
 };
