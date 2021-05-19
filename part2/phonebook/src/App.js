@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
-
-const Person = (props) => {
-  return (
-    <li>
-      {props.person.name}: {props.person.number}
-    </li>
-  );
-};
-
-const People = (props) => {
-  return props.people.map((person) => (
-    <Person key={person.name} person={person} />
-  ));
-};
+import People from './components/People';
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
 
 const App = () => {
   const [people, setPeople] = useState([
@@ -24,7 +13,7 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -48,48 +37,34 @@ const App = () => {
     return list.length > 0;
   };
 
-  const filteredPeople = people.filter((person) => {
-    return person.name.toLowerCase().includes(search.toLowerCase());
-  });
-
-  console.log(filteredPeople);
-
   const handleNameChange = (event) => {
-    // console.log(event.target.value);
     setNewName(event.target.value);
   };
 
   const handleNumberChange = (event) => {
-    // console.log(event.target.value);
     setNewNumber(event.target.value);
   };
 
-  const handleSearchChange = (event) => {
-    console.log(event.target.value);
-    setSearch(event.target.value);
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
   };
+
+  const filteredPeople = people.filter((person) => {
+    return person.name.toLowerCase().includes(filter.toLowerCase());
+  });
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with{' '}
-        <input type="text" value={search} onChange={handleSearchChange} />
-      </div>
-      <h2>Add New</h2>
-      <form action="" onSubmit={addPerson}>
-        <div>
-          name:{' '}
-          <input type="text" value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number:{' '}
-          <input type="tel" value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button>add</button>
-        </div>
-      </form>
+      <Filter filter={filter} handleChange={handleFilterChange} />
+      <h2>Add a New</h2>
+      <PersonForm
+        addPerson={addPerson}
+        nameValue={newName}
+        handleNameChange={handleNameChange}
+        numberValue={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
       <People people={filteredPeople} />
     </div>
