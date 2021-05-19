@@ -16,7 +16,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    if (alreadyPresent(newName)) {
+    if (isInPhonebook(newName)) {
       alert(`${newName} is already in the phone book`);
     } else {
       const personObject = {
@@ -27,11 +27,9 @@ const App = () => {
     }
   };
 
-  const alreadyPresent = (name) => {
-    console.log(name);
-    console.log(people.indexOf(name) !== -1);
-    // ERROR HERE. CHECK CONDITIONAL STATEMENT *****************************
-    return people.indexOf(name) !== -1;
+  const isInPhonebook = (name) => {
+    const list = people.filter((person) => person.name === name);
+    return list.length > 0;
   };
 
   const handleChange = (event) => {
