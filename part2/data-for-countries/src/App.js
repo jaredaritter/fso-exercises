@@ -1,31 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-const Filter = ({ filter, handleFilterChange }) => {
-  return (
-    <div>
-      find countries <input value={filter} onChange={handleFilterChange} />
-    </div>
-  );
-};
-
-const Result = ({ countries }) => {
-  if (countries.length > 10) {
-    return <p>Too many matches, increase filter specificity</p>;
-  } else if (countries.length < 1) {
-    return <p>No countries match this filter criteria</p>;
-  } else if (countries.length === 1) {
-    return <h2>{countries[0].name}</h2>;
-  } else {
-    return (
-      <ul>
-        {countries.map((country) => (
-          <li key={country.numericCode}>{country.name}</li>
-        ))}
-      </ul>
-    );
-  }
-};
+import Filter from './components/Filter';
+import Result from './components/Result';
 
 const App = () => {
   const [countries, setCountries] = useState([]);
