@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import People from './components/People';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
-import axios from 'axios';
+import peopleService from './services/people';
 
 const App = () => {
   const [people, setPeople] = useState([]);
@@ -11,14 +11,12 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   // USING EFFECT HOOK TO GRAB INITIAL DATA FROM JSON-SERVER AT LOCALHOST:3001
-  const hook = () => {
-    axios.get('http://localhost:3001/people').then((response) => {
-      console.log(response);
-      setPeople(response.data);
+  useEffect(() => {
+    peopleService.getAll().then((initialPeople) => {
+      // console.log(response);
+      setPeople(initialPeople);
     });
-  };
-
-  useEffect(hook, []);
+  }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -31,15 +29,33 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      setPeople(people.concat(personObject));
-      setNewName('');
-      setNewNumber('');
+      peopleService.create(personObject).then((returnedPerson) => {
+        setPeople(people.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
     }
   };
 
   const isInPhonebook = (name) => {
     const list = people.filter((person) => person.name === name);
     return list.length > 0;
+  };
+
+  const deletePerson = (id) => {
+    const person = people.find((person) => person.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      peopleService
+        .remove(id)
+        .then((response) => {
+          // console.log(response);
+          setPeople(people.filter((person) => person.id !== id));
+        })
+        .catch((error) => {
+          alert(`Person ${id} already removed`);
+          setPeople(people.filter((person) => person.id !== id));
+        });
+    }
   };
 
   const handleNameChange = (event) => {
@@ -71,7 +87,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <People people={filteredPeople} />
+      <People people={filteredPeople} deletePerson={deletePerson} />
     </div>
   );
 };
