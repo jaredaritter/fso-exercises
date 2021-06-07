@@ -21,14 +21,15 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     if (newName === '') {
-      alert('A name is required');
-    } else if (isInPhonebook(newName)) {
-      alert(`${newName} is already in the phone book`);
+      return alert('A name is required');
+    }
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
+    if (isInPhonebook(newName)) {
+      updateNumber(personObject);
     } else {
-      const personObject = {
-        name: newName,
-        number: newNumber,
-      };
       peopleService.create(personObject).then((returnedPerson) => {
         setPeople(people.concat(returnedPerson));
         setNewName('');
@@ -58,6 +59,30 @@ const App = () => {
     }
   };
 
+  const updateNumber = (personObject) => {
+    // IF USER WANTS TO UPDATE NUMBER OF PERSON THEN UPDATE, ELSE CANCEL
+    if (
+      window.confirm(
+        `${personObject.name} is already in the phonebook. Replace old number with new one?`
+      )
+    ) {
+      // PULL PERSON BASED ON CRITERIA
+      const person = people.find((person) => person.name === personObject.name);
+      // BUILD UPDATED VERSION OF PERSON
+      const updatedPerson = { ...person, number: personObject.number };
+
+      // SEND TO PEOPLESERVICE FOR DB UPDATE AND USE RETURNED DATA TO UPDATE APP
+      peopleService.update(person.id, updatedPerson).then((returnedPerson) => {
+        setPeople(people.map((p) => (p.id !== person.id ? p : returnedPerson)));
+        setNewName('');
+        setNewNumber('');
+      });
+      // SEND TO PEOPLESERVICE
+    } else {
+      console.log('not updating anything');
+    }
+  };
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -76,9 +101,9 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <Filter filter={filter} handleChange={handleFilterChange} />
-      <h2>Add a New</h2>
+      <h2>Add a New Person</h2>
       <PersonForm
         addPerson={addPerson}
         nameValue={newName}
