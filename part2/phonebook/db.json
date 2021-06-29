@@ -26,24 +26,9 @@
       "id": 5
     },
     {
-      "name": "Suzie",
-      "number": "555-555-5555",
+      "name": "Jared",
+      "number": "1243",
       "id": 6
-    },
-    {
-      "name": "Penny",
-      "number": "555",
-      "id": 7
-    },
-    {
-      "name": "Other",
-      "number": "",
-      "id": 8
-    },
-    {
-      "name": "Other Name",
-      "number": "555555",
-      "id": 9
     }
   ]
 }

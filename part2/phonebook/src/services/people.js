@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:3001/api/persons';
+// PHONEBOOK-BACKEND
+// const baseUrl = 'http://localhost:3001/api/persons';
+
+// JSON SERVER
+// const baseUrl = 'http://localhost:3001/people';
+
+// RELATIVE BASEURL FOR BUILD BEING SERVED BY BACKEND
+const baseUrl = '/api/persons';
 
 const getAll = () => {
   return axios.get(baseUrl).then((response) => response.data);

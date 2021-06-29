@@ -33,7 +33,7 @@ const App = () => {
   //     return person.name.toLowerCase().includes(filter.toLowerCase());
   //   });
   //   setFilteredPeople(filtered);
-  // }, [people]);
+  // }, [people, filter]);
 
   // -------------------------------
   // CREATE
@@ -42,6 +42,9 @@ const App = () => {
     event.preventDefault();
     if (newName === '') {
       return alert('A name is required');
+    }
+    if (newNumber === '') {
+      return alert('A number is required');
     }
     const personObject = {
       name: newName,
@@ -123,7 +126,6 @@ const App = () => {
       peopleService
         .remove(id)
         .then((response) => {
-          // console.log(response);
           setPeople(people.filter((person) => person.id !== id));
           setMessage({
             content: `${person.name} removed from phonebook`,
@@ -171,9 +173,17 @@ const App = () => {
   };
 
   // CAUSING ERROR MESSAGE ON ADDING PERSON DUE TO PERSON.NAME BEING UNDEFINED. RENDERS APPROPRIATELY ON REFRESH AND PERSON IS ADDED TO ARRAY PROPERLY. PROBLEM SEEMS TO BE BECAUSE IT IS SYNCHRONOUS.
-  const filteredPeople = people.filter((person) => {
-    return person.name.toLowerCase().includes(filter.toLowerCase());
-  });
+  // const filteredPeople = people.filter((person) => {
+  //   return person.name.toLowerCase().includes(filter.toLowerCase());
+  // });
+
+  // const filteredPeople = people.filter((person) => {
+  //   return person.name
+  //     ? person.name.toLowerCase().includes(filter.toLowerCase())
+  //     : '';
+  // });
+
+  const filteredPeople = people;
 
   // -------------------------------
   // APP
