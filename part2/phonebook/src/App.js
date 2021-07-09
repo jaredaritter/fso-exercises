@@ -45,18 +45,30 @@ const App = () => {
     if (isInPhonebook(newName)) {
       updateNumber(personObject);
     } else {
-      peopleService.create(personObject).then((returnedPerson) => {
-        setPeople(people.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-        setMessage({
-          content: `${returnedPerson.name} added to the phonebook`,
-          error: false,
+      peopleService
+        .create(personObject)
+        .then((returnedPerson) => {
+          setPeople(people.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+          setMessage({
+            content: `${returnedPerson.name} added to the phonebook`,
+            error: false,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 7000);
+        })
+        .catch((error) => {
+          console.log('Client log:', error.response.data);
+          setMessage({
+            content: error.response.data,
+            error: true,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 7000);
         });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-      });
     }
   };
 
