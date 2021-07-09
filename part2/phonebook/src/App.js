@@ -27,14 +27,6 @@ const App = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const filtered = people.filter((person) => {
-  //     console.log(person.name);
-  //     return person.name.toLowerCase().includes(filter.toLowerCase());
-  //   });
-  //   setFilteredPeople(filtered);
-  // }, [people, filter]);
-
   // -------------------------------
   // CREATE
   // -------------------------------
@@ -172,18 +164,9 @@ const App = () => {
     return list.length > 0;
   };
 
-  // CAUSING ERROR MESSAGE ON ADDING PERSON DUE TO PERSON.NAME BEING UNDEFINED. RENDERS APPROPRIATELY ON REFRESH AND PERSON IS ADDED TO ARRAY PROPERLY. PROBLEM SEEMS TO BE BECAUSE IT IS SYNCHRONOUS.
-  // const filteredPeople = people.filter((person) => {
-  //   return person.name.toLowerCase().includes(filter.toLowerCase());
-  // });
-
-  // const filteredPeople = people.filter((person) => {
-  //   return person.name
-  //     ? person.name.toLowerCase().includes(filter.toLowerCase())
-  //     : '';
-  // });
-
-  const filteredPeople = people;
+  const filteredPeople = people.filter((person) => {
+    return person.name.toLowerCase().includes(filter.toLowerCase());
+  });
 
   // -------------------------------
   // APP
