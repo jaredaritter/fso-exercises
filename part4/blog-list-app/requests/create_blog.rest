@@ -1,0 +1,18 @@
+// GOOD REQUEST
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "content": "VS Code REST client is pretty good",
+  "important": true
+}
+
+###
+// BAD REQUEST. STATUS 400. SHOULD FAIL MONGOOSE VALIDATION
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "content": "Bad",
+  "important": true
+}
