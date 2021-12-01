@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
-const helper = require('./test-helper');
+const helper = require('./test_helper');
 const Blog = require('../models/blog');
 
 beforeEach(async () => {
@@ -48,11 +48,11 @@ describe('exercises 4.8 - 4.12', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/);
 
-      const { body } = await api.get('/api/blogs');
+      const blogsAtEnd = await helper.blogsInDb();
 
-      expect(body).toHaveLength(helper.initialBlogs.length + 1);
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 
-      const titles = body.map((r) => r.title);
+      const titles = blogsAtEnd.map((r) => r.title);
       expect(titles).toContain('May The Fourth Be With You');
     });
 
