@@ -117,32 +117,55 @@ describe('exercises 4.8 - 4.12', () => {
   });
 });
 
-describe('DELETE', () => {
-  test('delete a valid blog post with status 204', async () => {
-    const newBlog = {
-      title: 'About Myself',
-      author: 'Myself',
-      url: 'https://www.aboutmyselfiamjared.com',
-      likes: 467,
-    };
+describe('exercises 4.13 - 4.14', () => {
+  describe('DELETE', () => {
+    test('delete a valid blog post with status 204', async () => {
+      const newBlog = {
+        title: 'About Myself',
+        author: 'Myself',
+        url: 'https://www.aboutmyselfiamjared.com',
+        likes: 467,
+      };
 
-    const response = await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
+      const response = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
 
-    await api.delete(`/api/blogs/${response.body.id}`).expect(204);
+      await api.delete(`/api/blogs/${response.body.id}`).expect(204);
 
-    const listAtEnd = await api.get('/api/blogs').expect(200);
+      const listAtEnd = await api.get('/api/blogs').expect(200);
 
-    expect(listAtEnd.body.length).toBe(helper.initialBlogs.length);
+      expect(listAtEnd.body.length).toBe(helper.initialBlogs.length);
+    });
+
+    test('return status 500 for invalid delete request', async () => {
+      const invalidId = '123abc';
+
+      await api.delete(`/api/blogs/${invalidId}`).expect(500);
+    });
   });
 
-  test('return status 500 for invalid delete request', async () => {
-    const invalidId = '123abc';
+  describe('PUT', () => {
+    test('Update a valid blog with status 204', async () => {
+      const response = await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
 
-    await api.delete(`/api/blogs/${invalidId}`).expect(500);
+      const firstBlog = response.body[0];
+
+      firstBlog['author'] = 'Evil Jared';
+
+      await api.put(`/api/blogs/${firstBlog.id}`).send(firstBlog).expect(204);
+
+      const secondResponse = await api.get('/api/blogs');
+
+      const authors = secondResponse.body.map((r) => r.author);
+
+      expect(authors).toContain('Evil Jared');
+    });
   });
 });
 
