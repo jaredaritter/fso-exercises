@@ -3,7 +3,9 @@ const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
 const helper = require('./test_helper');
+const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -166,6 +168,44 @@ describe('exercises 4.13 - 4.14', () => {
 
       expect(authors).toContain('Evil Jared');
     });
+  });
+});
+
+describe('exercises 4.15 - 4.23', () => {
+  describe('adding a new user', () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+
+      const passwordHash = await bcrypt.hash('secret', 10);
+      const user = new User({ username: 'root', passwordHash });
+
+      await user.save();
+    });
+    test('new user can be added', async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: 'second user',
+        name: 'second',
+        password: 'password',
+      };
+
+      // RETURNS ONLY CREATED USER
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      // RETURNS ALL USERS INCLUDING NEWLY ADDED ONE
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd.length).toEqual(usersAtStart.length + 1);
+
+      const usernames = usersAtEnd.map((user) => user.username);
+      expect(usernames).toContain(newUser.username);
+    });
+
+    expect();
   });
 });
 
