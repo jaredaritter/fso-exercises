@@ -142,10 +142,10 @@ describe('exercises 4.13 - 4.14', () => {
       expect(listAtEnd.body.length).toBe(helper.initialBlogs.length);
     });
 
-    test('return status 500 for invalid delete request', async () => {
+    test('return status 400 for invalid delete request', async () => {
       const invalidId = '123abc';
 
-      await api.delete(`/api/blogs/${invalidId}`).expect(500);
+      await api.delete(`/api/blogs/${invalidId}`).expect(400);
     });
   });
 
@@ -181,6 +181,7 @@ describe('exercises 4.15 - 4.23', () => {
 
       await user.save();
     });
+
     test('new user can be added', async () => {
       const usersAtStart = await helper.usersInDb();
 
@@ -205,7 +206,92 @@ describe('exercises 4.15 - 4.23', () => {
       expect(usernames).toContain(newUser.username);
     });
 
-    expect();
+    test('username must be unique', async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const newUser = {
+        username: 'root',
+        name: 'Superuser',
+        password: 'password',
+      };
+
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      expect(result.body.error).toContain('`username` to be unique');
+
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    });
+
+    test('username and password are required', async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const noUsername = {
+        name: 'no user name',
+        password: 'password',
+      };
+
+      const noPassword = {
+        username: 'no password',
+        name: 'no password',
+      };
+
+      // RETURNS ONLY CREATED USER
+      const response = await api
+        .post('/api/users')
+        .send(noUsername)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      await api
+        .post('/api/users')
+        .send(noPassword)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      expect(response.body.error).toContain('username and password required');
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    });
+
+    test('username and password require at least 3 characters', async () => {
+      const usersAtStart = await helper.usersInDb();
+
+      const shortUsername = {
+        username: '2',
+        name: 'two character username',
+        password: 'password',
+      };
+
+      const shortPassword = {
+        username: 'short password',
+        name: 'short password',
+        password: '2',
+      };
+
+      // RETURNS ONLY CREATED USER
+      const response = await api
+        .post('/api/users')
+        .send(shortUsername)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      await api
+        .post('/api/users')
+        .send(shortPassword)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      expect(response.body.error).toContain(
+        'username and password must be at least 3 characters'
+      );
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    });
   });
 });
 
